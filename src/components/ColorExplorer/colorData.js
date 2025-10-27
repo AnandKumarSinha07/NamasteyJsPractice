@@ -153,4 +153,3 @@ export const colorNameToHex = (name) => {
   return colors[name.replace(/\s+/g, "")];
 };
 
-console.log(colorNameToHex("red"))

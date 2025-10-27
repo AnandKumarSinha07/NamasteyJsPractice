@@ -65,8 +65,6 @@ function CharacterCount() {
               {`Limit exceeded by ${Overlimit} characters`}
             </p>
           ) : ("")}
-
-
         </div>
       </div>
     </div>

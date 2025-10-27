@@ -11,7 +11,7 @@ function ReadMoreToggle() {
                 which improves performance by minimizing direct manipulation of the actual
                 DOM.`;
 
-   const [newText,setText]=useState(text.slice(0,114))
+   const [newText]=useState(text.slice(0,114))
    const [trimText,setTrim]=useState(false);
    const [fullText,setFulltext]=useState(text)
  

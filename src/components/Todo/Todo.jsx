@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 function Todo() {
 
@@ -7,18 +7,38 @@ function Todo() {
   const [ticked,setTicked]=useState(false);
   //const [changeText,setChangeText]=useState('');
 
+  useEffect(()=>{
+    fetch('http://localhost:4000/getTodo')
+    .then(res=>res.json())
+    .then(data=>setResult(data))
+    .catch(err=>console.log(err))
+  },[])
+
 
   function addTodo(){
-      setResult([...result,input]);
-      setInput('')
+      fetch('http://localhost:4000/addTodo',{
+         method:'POST',
+         headers: {'Content-Type': 'application/json'},
+         body: JSON.stringify({ 
+            user: input,        // send the username from input
+            text: input,        // or another input for text
+            completed: false
+          })
+      }).then(res=>res.json()).then(data=>{
+           console.log("data",data)
+           setResult([...result,data]);
+           setInput('')
+      })    
   }
+
 
   function deleteTodo(index){
-     const filter=result.filter((_,i)=>i!=index)
-     setResult(filter)
+    //  const filter=result.filter((_,i)=>i!=index)
+    //  setResult(filter)
+     fetch(`http://localhost:4000/todo/delete/${index}`,{
+      method:'DELETE'
+     }).then(()=>setResult(result.filter((_,i)=>i!=index)))
   }
-
-
 
   function completed(event){
     console.log(ticked)
@@ -41,11 +61,16 @@ function Todo() {
 
       
        <div style={{display:"flex", flexDirection:"column",gap:"15px"}}>
-               <input type='text' placeholder='Enter Text'
+       <div style={{display:"flex", padding:"10px",gap:"10px"}}>
+               <input type='text' placeholder='User Name'
                 value={input}
-                style={{padding:"10px 8px",fontSize:"1rem"}}
+                style={{padding:"2px 2px",fontSize:"1rem"}}
                 onChange={(e)=>setInput(e.target.value)}/>
-                <button onClick={()=>addTodo()}>Add</button>
+                <button style={{padding:"15px 22px"}} onClick={()=>addTodo()}>Add user</button>
+                <textarea style={{textAlign:'center', paddingTop:"20px"}}>Enter Text</textarea>
+                <button>Add Text</button>
+                <input type='checkbox'/>
+                </div>
        </div>
         
         <div style={{display:"flex",gap:"15px",flexDirection:"column"}}>
@@ -53,7 +78,7 @@ function Todo() {
 
             return     item && (
                        <div style={{display:"flex",gap:"10px" , width:"auto"  , justifyContent:"center",alignContent:"center",color:"black",fontWeight:"bolder"}} key={id}>
-                           <div>{item}</div>
+                           <div>{item.text}</div>
                             <button  onClick={()=>deleteTodo(id)}>Delete</button>
                             <button onClick={()=>editTodo()}>Edit</button>
                             <input type='checkbox' style={{width:"20px"}} 
